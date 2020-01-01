@@ -27,7 +27,7 @@ router.get('/:id', asyncHandler( async (req, res) => {
 }));
 
 router.post('/', asyncHandler( async (req, res) => {
-    const newCourse = await models.Course.create(req.body);
+    await models.Course.create(req.body);
     res.status(201).end();
 }));
 
