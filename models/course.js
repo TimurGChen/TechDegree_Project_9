@@ -2,7 +2,6 @@ const Sequelize = require('sequelize');
 
 module.exports = sequelize => {
     class Course extends Sequelize.Model {}
-    
     Course.init({
         id: {
             type: Sequelize.INTEGER,
@@ -12,10 +11,26 @@ module.exports = sequelize => {
         title: {
             type: Sequelize.STRING,
             allowNull: false,
+            validate: {
+                notNull: {
+                    msg: "Please enter the course title"
+                },
+                notEmpty: {
+                    msg: "Please enter the course title"
+                }
+            }
         },
         description: {
             type: Sequelize.STRING,
             allowNull: false,
+            validate: {
+                notNull: {
+                    msg: "Please enter the course description"
+                },
+                notEmpty: {
+                    msg: "Please enter the course description"
+                }
+            }
         },
         estimatedTime: {
             type: Sequelize.STRING,
@@ -25,15 +40,14 @@ module.exports = sequelize => {
             type: Sequelize.STRING,
             allowNull: true,
         }
-    });
+    }, {sequelize});
 
     Course.associate = models => {
         Course.belongsTo(models.User, {
             as: 'user',
-            foreignKey: {
-                fieldName: 'userId',
-                field: 'userId',
-            }
+            foreignKey: 'userId'
         });
     };
+
+    return Course;
 }

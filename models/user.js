@@ -11,14 +11,41 @@ module.exports = sequelize => {
         firstName: {
             type: Sequelize.INTEGER,
             allowNull: false,
+            validate: {
+                notNull: {
+                    msg: "Please enter your first name"
+                },
+                notEmpty: {
+                    msg: "Please enter your first name"
+                }
+            }
         },
         lastName: {
             type: Sequelize.INTEGER,
             allowNull: false,
+            validate: {
+                notNull: {
+                    msg: "Please enter your last name"
+                },
+                notEmpty: {
+                    msg: "Please enter your last name"
+                }
+            }
         },
         emailAddress: {
             type: Sequelize.INTEGER,
             allowNull: false,
+            validate: {
+                notNull: {
+                    msg: "Please provide your email"
+                },
+                notEmpty: {
+                    msg: "Please provide your email"
+                },
+                isEmail: {
+                    msg: "Please enter a valid email address - for@example.com"
+                }
+            }
         },
         password: {
             type: Sequelize.INTEGER,
@@ -29,10 +56,7 @@ module.exports = sequelize => {
     User.associate = models => {
         User.hasMany(models.Course, {
             as: 'user',
-            foreignKey: {
-                fieldName: 'userId',
-                field: 'userId',
-            }
+            foreignKey: 'userId'
         });        
     };
 
