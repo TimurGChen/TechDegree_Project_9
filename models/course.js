@@ -8,6 +8,18 @@ module.exports = sequelize => {
             primaryKey: true,
             autoIncrement: true
         },
+        userId: {
+            type: Sequelize.INTEGER,
+            allowNull: false,
+            validate: {
+                notNull: {
+                    msg: "Please provide an integer value for \"userId\""
+                },
+                notEmpty: {
+                    msg: "Please provide an integer value for \"userId\""
+                },
+            }
+        },
         title: {
             type: Sequelize.STRING,
             allowNull: false,

@@ -5,8 +5,6 @@ const express = require('express');
 const morgan = require('morgan');
 const db = require('./models');
 const { sequelize, models } = db;
-const usersRoutes = require('./routes/usersRoutes');
-const coursesRoutes = require('./routes/coursesRoutes');
 
 // variable to enable global error logging
 const enableGlobalErrorLogging = process.env.ENABLE_GLOBAL_ERROR_LOGGING === 'true';
@@ -17,13 +15,15 @@ const app = express();
 // setup morgan which gives us http request logging
 app.use(morgan('dev'));
 
-
-// TODO setup your api routes here
+// setup the express app to enable request.body
 app.use(express.json());
+
+// api routes setup
+const usersRoutes = require('./routes/usersRoutes');
+const coursesRoutes = require('./routes/coursesRoutes');
 app.use('/api/users', usersRoutes);
 app.use('/api/courses', coursesRoutes);
 
-// setting up the database
 // log status of connection to database
 (async () => {
   await sequelize
@@ -36,7 +36,6 @@ app.use('/api/courses', coursesRoutes);
     });
 })();
 
-
 // setup a friendly greeting for the root route
 app.get('/', (req, res) => {
   res.json({
@@ -45,25 +44,24 @@ app.get('/', (req, res) => {
 });
 
 // send 404 if no other route matched
-app.use((req, res) => {
-  res.status(404).json({
-    message: 'Route Not Found',
+app.use((req, res, next) => {
+    res.status(404).json({
+      Message: 'Route Not Found',
+    });
   });
-});
-
-// setup a global error handler
+  
+// global error handler
 app.use((err, req, res, next) => {
-  if (enableGlobalErrorLogging) {
-    console.error(`Global error handler: ${JSON.stringify(err.stack)}`);
-  }
-
-  res.status(err.status || 500).json({
-    message: err.message,
-    error: {err},
-  });
+    if (enableGlobalErrorLogging) {
+        console.error(`Global error handler: ${JSON.stringify(err.stack)}`);
+    }
+    res.status(err.status || 500).json({
+        message: err.message,
+        error: {err},
+    });
 });
 
-// set our port
+// set port
 app.set('port', process.env.PORT || 5000);
 
 // start listening on our port

@@ -1,44 +1,61 @@
 const express = require('express');
 const router = express.Router();
-const {Sequelize, sequelize, models} = require('../models');
+const { models } = require('../models');
+const { Course } = models;
+const { asyncHandler, authenticateUser } = require('./helpers');
 
-const asyncHandler = cb => {
-    return async (req, res, next) => {
-        try{
-            await cb(req, res, next);
-        } catch(err) {
-            if (err.name === "SequelizeValidationError") {
-                res.status = 400;
-            }
-            next(err);
-        }
-    }
-}
-
-//courses routes
+// GET all courses
 router.get('/', asyncHandler( async(req, res) => {
-    const allCourses = await models.Course.findAll();
+    const allCourses = await Course.findAll({
+        attributes: ['id', 'userId', 'title', 'description', 'estimatedTime', 'materialsNeeded']
+    });
     res.status(200).json(allCourses);
 }));
-  
+
+// GET the course with id
 router.get('/:id', asyncHandler( async (req, res) => {
-    const course = await models.Course.findByPk(req.params.id);
+    const course = await Course.findByPk(req.params.id, {
+        attributes: ['id', 'userId', 'title', 'description', 'estimatedTime', 'materialsNeeded']
+    });
     res.status(200).json(course);
 }));
 
-router.post('/', asyncHandler( async (req, res) => {
-    await models.Course.create(req.body);
+// POST (create) a new course
+router.post('/', authenticateUser, asyncHandler( async (req, res) => {
+    const newCourse = await Course.create(req.body);
     res.status(201).end();
 }));
 
-router.put('/:id', (req, res) => {
+// PUT (update) the course with id
+router.put('/:id', authenticateUser, asyncHandler( async (req, res) => {
     const id = req.params.id;
-    res.status(204).end();
-})
+    const course = await Course.findByPk(id);
+    if (course) {
+        if (course.userId === req.currentUser.id) {
+            await course.update(req.body);
+            res.status(204).end();
+        } else {
+            res.status(403).json({ "Message": "The user do not have access to the course" });
+        }
+    } else {
+        throw new Error(`The course with id: ${id} does not exist!`);
+    }
+}));
 
-router.delete('/:id', (req, res) => {
+// DELETE the course with id
+router.delete('/:id', authenticateUser, asyncHandler( async (req, res) => {
     const id = req.params.id;
-    res.status(204).end();
-})
+    const course = await Course.findByPk(id);
+    if (course) {
+        if (course.userId === req.currentUser.id) {
+            await course.destroy();
+            res.status(204).end();
+        } else {
+            res.status(403).json({ "Message": "The user do not have access to the course" });
+        }
+    } else {
+        throw new Error(`The course with id: ${id} does not exist!`);
+    }
+}));
 
 module.exports = router;

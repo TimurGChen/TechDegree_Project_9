@@ -44,12 +44,24 @@ module.exports = sequelize => {
                 },
                 isEmail: {
                     msg: "Please enter a valid email address - for@example.com"
-                }
+                },
+            },
+            unique: {
+                args: true,
+                msg: "The email address has already been registered"
             }
         },
         password: {
             type: Sequelize.INTEGER,
             allowNull: false,
+            validate: {
+                notNull: {
+                    msg: "Please enter a password"
+                },
+                notEmpty: {
+                    msg: "Please enter a password"
+                }
+            }
         }
     }, { sequelize });
 
