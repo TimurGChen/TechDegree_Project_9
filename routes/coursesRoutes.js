@@ -23,7 +23,8 @@ router.get('/:id', asyncHandler( async (req, res) => {
 // POST (create) a new course
 router.post('/', authenticateUser, asyncHandler( async (req, res) => {
     const newCourse = await Course.create(req.body);
-    res.status(201).end();
+    const courseId = newCourse.id;
+    res.status(201).location(`/api/courses/${courseId}`).end();
 }));
 
 // PUT (update) the course with id
@@ -32,8 +33,12 @@ router.put('/:id', authenticateUser, asyncHandler( async (req, res) => {
     const course = await Course.findByPk(id);
     if (course) {
         if (course.userId === req.currentUser.id) {
-            await course.update(req.body);
-            res.status(204).end();
+            if (req.body && req.body.title && req.body.description) {
+                await course.update(req.body);
+                res.status(204).end();
+            } else {
+                res.status(400).json({"Message": "Please provide values for \"title\" and \"description\""});
+            }
         } else {
             res.status(403).json({ "Message": "The user do not have access to the course" });
         }

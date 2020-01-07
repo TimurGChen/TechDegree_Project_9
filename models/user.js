@@ -9,7 +9,7 @@ module.exports = sequelize => {
             autoIncrement: true,
         },
         firstName: {
-            type: Sequelize.INTEGER,
+            type: Sequelize.STRING,
             allowNull: false,
             validate: {
                 notNull: {
@@ -21,7 +21,7 @@ module.exports = sequelize => {
             }
         },
         lastName: {
-            type: Sequelize.INTEGER,
+            type: Sequelize.STRING,
             allowNull: false,
             validate: {
                 notNull: {
@@ -33,7 +33,7 @@ module.exports = sequelize => {
             }
         },
         emailAddress: {
-            type: Sequelize.INTEGER,
+            type: Sequelize.STRING,
             allowNull: false,
             validate: {
                 notNull: {
@@ -52,7 +52,7 @@ module.exports = sequelize => {
             }
         },
         password: {
-            type: Sequelize.INTEGER,
+            type: Sequelize.STRING,
             allowNull: false,
             validate: {
                 notNull: {

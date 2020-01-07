@@ -20,8 +20,8 @@ router.post('/', asyncHandler( async (req, res) => {
     if (user.password) {
         user.password = bcryptjs.hashSync(user.password);
     }
-    const newUser = await User.create(user);
-    res.status(201).end();
+    await User.create(user);
+    res.status(201).location('/').end();
 }));
 
 module.exports = router;
