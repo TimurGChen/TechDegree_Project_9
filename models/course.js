@@ -21,7 +21,7 @@ module.exports = sequelize => {
             }
         },
         title: {
-            type: Sequelize.TEXT,
+            type: Sequelize.STRING,
             allowNull: false,
             validate: {
                 notNull: {
@@ -33,7 +33,7 @@ module.exports = sequelize => {
             }
         },
         description: {
-            type: Sequelize.STRING,
+            type: Sequelize.TEXT,
             allowNull: false,
             validate: {
                 notNull: {
